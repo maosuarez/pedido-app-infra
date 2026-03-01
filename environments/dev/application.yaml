@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: pedido-app-dev
+  namespace: argocd
+  # El finalizer garantiza que ArgoCD elimine los recursos del cluster
+  # cuando este Application sea borrado (cascading delete).
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/maosuarez/pedido-app-infra
+    targetRevision: main          # Rama que ArgoCD monitorea
+    path: charts/pedido-app       # Dónde está el chart raíz
+    helm:
+      valueFiles:
+        - values-dev.yaml         # Overrides del ambiente dev
+
+  destination:
+    server: https://kubernetes.default.svc   # El mismo cluster donde corre ArgoCD
+    namespace: dev
+
+  syncPolicy:
+    automated:
+      selfHeal: true   # Si alguien modifica un recurso a mano, ArgoCD lo revierte
+      prune: true      # Si se elimina un recurso del chart, ArgoCD lo borra del cluster
+    syncOptions:
+      - CreateNamespace=true   # Crea el namespace dev si no existe
