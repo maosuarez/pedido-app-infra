@@ -1,6 +1,5 @@
-# Helm: paquetes de dependencias generados por helm dependency update
-# Ejecutar estos comandos antes de lint/install:
+# Las dependencias Helm (.tgz) se commitean intencionalmente.
+# ArgoCD las necesita en el repo para poder renderizar el chart sin acceso externo.
+# Para regenerarlas localmente:
 #   helm dependency update charts/pedido-app/charts/db
 #   helm dependency update charts/pedido-app
-charts/pedido-app/charts/*.tgz
-charts/pedido-app/charts/db/charts/*.tgz
