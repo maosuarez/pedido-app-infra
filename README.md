@@ -86,8 +86,6 @@ pedido-app-infra/
 │   │   └── application.yaml        # ArgoCD Application → namespace dev
 │   └── prod/
 │       └── application.yaml        # ArgoCD Application → namespace prod
-├── ingress/
-│   └── ingress.yaml                # Ingress: / → frontend, /api/* → backend
 ├── CLAUDE.md
 └── README.md
 ```
@@ -98,7 +96,7 @@ pedido-app-infra/
 
 | Herramienta | Instalación rápida |
 |---|---|
-| ingress-nginx | `helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --create-namespace` |
+| ingress-nginx | `helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --create-namespace --set controller.service.externalTrafficPolicy=Local` |
 | metrics-server | `kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml` |
 | ArgoCD | ver sección ArgoCD abajo |
 
@@ -181,6 +179,55 @@ Cuando se hace `git push` a `main` en este repo, ArgoCD (con polling cada 3 min 
 
 ---
 
+## 🌍 Configuración de hosts local (DNS local)
+
+Para acceder por nombre de dominio desde tu máquina, el sistema operativo debe resolver
+`pedido-app.dev.local` y `pedido-app.prod.local` a la IP del Ingress (`20.185.8.196`).
+
+### Windows (como Administrador)
+
+Abre PowerShell como administrador y ejecuta:
+
+```powershell
+Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "20.185.8.196  pedido-app.dev.local"
+Add-Content -Path "C:\Windows\System32\drivers\etc\hosts" -Value "20.185.8.196  pedido-app.prod.local"
+```
+
+Verifica:
+```powershell
+Get-Content "C:\Windows\System32\drivers\etc\hosts" | Select-String "pedido-app"
+```
+
+### Linux / WSL (Parrot OS, Ubuntu, etc.)
+
+```bash
+echo "20.185.8.196  pedido-app.dev.local"  | sudo tee -a /etc/hosts
+echo "20.185.8.196  pedido-app.prod.local" | sudo tee -a /etc/hosts
+
+# Verifica
+grep "pedido-app" /etc/hosts
+```
+
+### Probar con curl y navegador
+
+```bash
+# Dev
+curl http://pedido-app.dev.local/api/pedidos        # Espera: []
+curl http://pedido-app.dev.local/actuator/health    # Espera: {"status":"UP"}
+
+# Prod
+curl http://pedido-app.prod.local/api/pedidos
+curl http://pedido-app.prod.local/actuator/health
+```
+
+En el navegador simplemente abre `http://pedido-app.dev.local/api/pedidos`.
+
+> **Nota AKS**: El health probe de ingress-nginx en AKS requiere `externalTrafficPolicy: Local`.
+> Si el curl da TCP timeout, ejecuta:
+> `helm upgrade ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --set controller.service.externalTrafficPolicy=Local`
+
+---
+
 ## 🌐 Endpoints de acceso
 
 ```bash
@@ -196,10 +243,12 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 IP pública del Ingress (AKS): `20.185.8.196`
 
-| Entorno | Frontend | Backend API |
+| Entorno | Host local | Backend API |
 |---|---|---|
-| dev | `http://20.185.8.196/` *(frontend pendiente)* | `http://20.185.8.196/api/pedidos` |
-| prod | `http://20.185.8.196/` *(frontend pendiente)* | `http://20.185.8.196/api/pedidos` |
+| dev  | `pedido-app.dev.local`  | `http://pedido-app.dev.local/api/pedidos`  |
+| prod | `pedido-app.prod.local` | `http://pedido-app.prod.local/api/pedidos` |
+
+> El Ingress enruta por header `Host`, no por IP directa. Siempre usar el hostname.
 
 ---
 
@@ -259,8 +308,8 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 
 | # | Tarea | Responsable | Estado | Rama |
 |---|---|---|---|---|
-| 15 | `environments/dev/application.yaml` con sync automático | Persona B | ⬜ | `feature/pb-argocd-dev` |
-| 16 | `environments/prod/application.yaml` con sync automático | Persona B | ⬜ | `feature/pb-argocd-prod` |
+| 15 | `environments/dev/application.yaml` con sync automático | Persona B | ✅ | `feature/pb-argocd-apps` |
+| 16 | `environments/prod/application.yaml` con sync automático | Persona B | ✅ | `feature/pb-argocd-apps` |
 | 17 | Validar sync automático al cambiar `values-dev.yaml` | Ambos | ⬜ | — |
 
 ### ✅ Validación
@@ -268,7 +317,7 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 | # | Tarea | Responsable | Estado | Rama |
 |---|---|---|---|---|
 | 18 | `helm lint` y `helm template` sin errores | Persona A | ✅ | — |
-| 19 | Despliegue en dev: todos los pods Running | Persona B | ⬜ | — |
+| 19 | Despliegue en dev: todos los pods Running | Persona B | ✅ | — |
 | 20 | Verificar persistencia: reiniciar PostgreSQL, datos intactos | Persona B | ⬜ | — |
 | 21 | Verificar Ingress: frontend en `/`, API en `/api/` | Ambos | ⬜ | — |
 | 22 | Verificar HPA: carga → escalado automático del backend | Ambos | ⬜ | — |
@@ -295,12 +344,12 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 ```
 Setup          [██████████]  4/4   ← ingress-nginx, metrics-server y ArgoCD instalados
 Helm Chart     [█████████░]  9/10  ← pendiente: subchart frontend (tarea 13)
-ArgoCD         [░░░░░░░░░░]  0/3
-Validación     [██░░░░░░░░]  1/5   ← helm lint y template sin errores
+ArgoCD         [██████████]  3/3   ← Applications dev y prod aplicadas, sync automático activo
+Validación     [████░░░░░░]  2/5   ← helm lint OK + dev Running + Ingress funcional
 Documentación  [░░░░░░░░░░]  0/3
 Demo           [░░░░░░░░░░]  0/2
 ──────────────────────────────
-Total          [████░░░░░░]  14/27
+Total          [████████░░]  18/27
 ```
 
 > Actualiza el estado: `⬜ → 🔄 → ✅`

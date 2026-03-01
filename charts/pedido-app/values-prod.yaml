@@ -1,6 +1,6 @@
 # values-prod.yaml — overrides para el ambiente prod
-# IMPORTANTE: las contraseñas se pasan como texto plano — el template usa stringData.
-# En prod real usar helm-secrets o External Secrets Operator en lugar de este archivo.
+# IMPORTANTE: las contraseñas están en texto plano solo para pruebas académicas.
+# En producción real usar helm-secrets o External Secrets Operator.
 
 global:
   environment: prod
@@ -20,7 +20,7 @@ backend:
       cpu: "1000m"
       memory: "512Mi"
   auth:
-    dbPassword: ""  # REQUERIDO: proveer en despliegue prod
+    dbPassword: "pedidos_prod_pass"
 
 frontend:
   image:
@@ -37,14 +37,13 @@ frontend:
 db:
   postgresql:
     auth:
-      password: ""  # REQUERIDO: proveer en despliegue prod
+      password: "pedidos_prod_pass"
     primary:
       persistence:
         size: 10Gi
         storageClass: "managed-csi"  # StorageClass de AKS para discos persistentes
 
 ingress:
-  host: pedido-app.example.com
+  host: pedido-app.prod.local
   tls:
-    enabled: true
-    secretName: pedido-app-tls-prod
+    enabled: false     # Sin TLS para pruebas locales (no hay cert disponible)
