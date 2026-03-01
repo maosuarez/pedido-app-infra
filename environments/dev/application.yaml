@@ -15,6 +15,10 @@ spec:
     targetRevision: main          # Rama que ArgoCD monitorea
     path: charts/pedido-app       # Dónde está el chart raíz
     helm:
+      # releaseName fijo: los nombres de recursos (Services, Secrets, etc.) dependen
+      # del release name. Si ArgoCD usa el nombre del Application como release, los
+      # nombres cambian y el backend no puede resolver el host de PostgreSQL.
+      releaseName: pedido-app
       valueFiles:
         - values-dev.yaml         # Overrides del ambiente dev
 
