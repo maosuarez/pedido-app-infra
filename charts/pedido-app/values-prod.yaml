@@ -1,0 +1,50 @@
+# values-prod.yaml — overrides para el ambiente prod
+# Aplica sobre values.yaml. Réplicas altas, tags semver estables, PVC grande.
+# IMPORTANTE: En prod real, las contraseñas deben gestionarse con helm-secrets
+# o External Secrets Operator. Los valores base64 aquí son solo para este proyecto.
+
+global:
+  environment: prod
+
+backend:
+  image:
+    tag: "1.0.0"
+  replicaCount: 2
+  hpa:
+    minReplicas: 2
+    maxReplicas: 5
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "512Mi"
+  auth:
+    dbPassword: ""  # REQUERIDO: sobreescribir en despliegue prod con valor real en base64
+
+frontend:
+  image:
+    tag: "1.0.0"
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+
+db:
+  auth:
+    password: ""  # REQUERIDO: sobreescribir en despliegue prod con valor real en base64
+  primary:
+    persistence:
+      size: 10Gi
+      storageClass: "standard"  # Ajustar al StorageClass del cluster de prod
+
+ingress:
+  host: pedido-app.example.com
+  tls:
+    enabled: true
+    secretName: pedido-app-tls-prod
