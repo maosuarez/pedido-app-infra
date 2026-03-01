@@ -310,7 +310,7 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 |---|---|---|---|---|
 | 15 | `environments/dev/application.yaml` con sync automático | Persona B | ✅ | `feature/pb-argocd-apps` |
 | 16 | `environments/prod/application.yaml` con sync automático | Persona B | ✅ | `feature/pb-argocd-apps` |
-| 17 | Validar sync automático al cambiar `values-dev.yaml` | Ambos | ⬜ | — |
+| 17 | Validar sync automático al cambiar `values-dev.yaml` | Ambos | ✅ | — |
 
 ### ✅ Validación
 
