@@ -29,14 +29,16 @@ backend:
     targetCPUUtilizationPercentage: 70
   # Variables de entorno inyectadas via ConfigMap
   config:
-    dbHost: "pedido-app-db-postgresql"
+    # El Service de Bitnami postgresql toma el nombre: <release>-postgresql
+    # Con release "pedido-app" → "pedido-app-postgresql"
+    dbHost: "pedido-app-postgresql"
     dbPort: "5432"
     dbName: "pedidos"
     serverPort: "8080"
-  # Credenciales inyectadas via Secret (valores base64 en el template)
+  # Credenciales inyectadas via Secret con stringData (texto plano → Kubernetes codifica)
   auth:
     dbUser: "pedidos_user"
-    dbPassword: ""  # Siempre override en valores por ambiente — nunca texto plano en prod
+    dbPassword: ""  # Override en values-dev/prod — nunca dejar vacío en producción
 
 # ---------------------------------------------------------------------------
 # Frontend
@@ -61,16 +63,19 @@ frontend:
 # ---------------------------------------------------------------------------
 # Base de datos (PostgreSQL via subchart db / Bitnami)
 # ---------------------------------------------------------------------------
+# La clave "postgresql" es obligatoria: es el nombre de la dependencia en db/Chart.yaml.
+# Helm pasa estos valores al chart de Bitnami usando esa clave como prefijo.
 db:
-  auth:
-    database: pedidos
-    username: pedidos_user
-    password: ""  # Override obligatorio — ver nota de credenciales en CLAUDE.md
-  primary:
-    persistence:
-      enabled: true
-      size: 1Gi
-      storageClass: ""  # Usar StorageClass por defecto del cluster
+  postgresql:
+    auth:
+      database: pedidos
+      username: pedidos_user
+      password: ""  # Override obligatorio en values-dev/prod
+    primary:
+      persistence:
+        enabled: true
+        size: 1Gi
+        storageClass: ""  # Usa StorageClass por defecto del cluster
 
 # ---------------------------------------------------------------------------
 # Ingress

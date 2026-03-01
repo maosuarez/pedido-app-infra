@@ -12,7 +12,8 @@ backend:
     minReplicas: 1
     maxReplicas: 2
   auth:
-    dbPassword: "cGVkaWRvc19kZXZfcGFzcw=="  # base64: pedidos_dev_pass
+    # Texto plano: el template usa stringData, Kubernetes hace el encoding a base64
+    dbPassword: "pedidos_dev_pass"
 
 frontend:
   image:
@@ -20,11 +21,13 @@ frontend:
   replicaCount: 1
 
 db:
-  auth:
-    password: "cGVkaWRvc19kZXZfcGFzcw=="  # base64: pedidos_dev_pass — mismo que backend.auth.dbPassword
-  primary:
-    persistence:
-      size: 1Gi
+  postgresql:
+    auth:
+      # Debe coincidir con backend.auth.dbPassword para que el backend se conecte
+      password: "pedidos_dev_pass"
+    primary:
+      persistence:
+        size: 1Gi
 
 ingress:
   host: pedido-app.dev.local

@@ -1,0 +1,15 @@
+# db/values.yaml
+# Defaults del subchart db para el chart de Bitnami postgresql.
+# La clave "postgresql" es el nombre exacto de la dependencia declarada en Chart.yaml
+# — Helm la usa para pasar estos valores al chart de Bitnami.
+
+postgresql:
+  auth:
+    database: pedidos
+    username: pedidos_user
+    password: ""             # Override obligatorio en values-dev/prod
+  primary:
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: ""       # Usa StorageClass por defecto del cluster
