@@ -3,10 +3,10 @@
 # El controlador ingress-nginx lee este objeto y configura nginx automáticamente.
 #
 # Rutas activas:
-#   /api/   → pedido-app-backend:8080  (API REST del backend)
+#   /api/pedidos  → pedido-app-backend:8080  (el backend ya define /api/* en sus rutas)
 #
 # Ruta pendiente (frontend no implementado aún):
-#   /       → pedido-app-frontend:80
+#   /             → pedido-app-frontend:80
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -16,21 +16,19 @@ metadata:
     component: ingress
     environment: {{ .Values.global.environment }}
     managed-by: helm
+  {{- with .Values.ingress.annotations }}
   annotations:
-    # Reescribe la URL antes de enviarla al backend:
-    # /api/pedidos → /pedidos (el backend no necesita el prefijo /api)
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-    {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
-    {{- end }}
+  {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          - path: /api(/|$)(.*)
-            pathType: ImplementationSpecific
+          # Sin rewrite: el backend recibe la URL tal cual (/api/pedidos llega como /api/pedidos)
+          - path: /api
+            pathType: Prefix
             backend:
               service:
                 name: {{ .Release.Name }}-backend
