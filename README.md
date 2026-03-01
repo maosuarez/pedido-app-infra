@@ -2,7 +2,7 @@
 
 > Helm charts + ArgoCD GitOps pipeline para el sistema de gestión de pedidos.
 > Este repositorio es el **source of truth** del estado del cluster Kubernetes.
-> El código fuente y las imágenes Docker viven en [`pedido-app-src`](https://github.com/<org>/pedido-app-src).
+> El código fuente y las imágenes Docker viven en [`pedido-app-src`](https://github.com/maosuarez/pedido-app-src).
 
 ---
 
@@ -20,8 +20,8 @@
 ```
   pedido-app-src (CI)
         │
-        │  docker push <user>/pedido-backend:<tag>
-        │  docker push <user>/pedido-frontend:<tag>
+        │  docker push maosuarez/pedido-backend:<tag>
+        │  docker push maosuarez/pedido-frontend:<tag>
         ▼
    Docker Hub
         │
@@ -63,8 +63,8 @@ pedido-app-infra/
 │   └── pedido-app/
 │       ├── Chart.yaml              # Chart raíz + dependencia Bitnami PostgreSQL
 │       ├── values.yaml             # Defaults base (todos los parámetros)
-│       ├── values-dev.yaml         # Overrides dev: réplicas bajas, tag dev-*
-│       ├── values-prod.yaml        # Overrides prod: réplicas altas, tag semver
+│       ├── values-dev.yaml         # Overrides dev: réplicas bajas, tag Major.Minor.Fix-dev
+│       ├── values-prod.yaml        # Overrides prod: réplicas altas, tag Major.Minor.Fix
 │       └── charts/
 │           ├── backend/
 │           │   ├── Chart.yaml
@@ -108,7 +108,7 @@ pedido-app-infra/
 
 ```bash
 # 1. Clonar
-git clone https://github.com/<org>/pedido-app-infra
+git clone https://github.com/maosuarez/pedido-app-infra
 cd pedido-app-infra
 
 # 2. Descargar dependencias (Bitnami PostgreSQL)
@@ -137,7 +137,7 @@ kubectl get ingress -n dev
 
 ```bash
 # Editar values-dev.yaml con el nuevo tag
-# backend.image.tag: "dev-a1b2c3d"
+# backend.image.tag: "1.0.0-dev"
 # Luego:
 helm upgrade pedido-app charts/pedido-app \
   -f charts/pedido-app/values-dev.yaml --namespace dev
@@ -167,7 +167,7 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 # Abrir: https://localhost:8080  |  user: admin
 
 # Registrar el repo (si es privado)
-argocd repo add https://github.com/<org>/pedido-app-infra \
+argocd repo add https://github.com/maosuarez/pedido-app-infra \
   --username <user> --password <token>
 
 # Aplicar Applications
@@ -200,10 +200,11 @@ kubectl get ingress -n prod
 
 | Componente | Imagen | Dev tag | Prod tag |
 |---|---|---|---|
-| Backend | `<user>/pedido-backend` | `dev-<sha>` | tag semver |
-| Frontend | `<user>/pedido-frontend` | `dev-<sha>` | tag semver |
+| Backend | `maosuarez/pedido-backend` | `Major.Minor.Fix-dev` (ej. `1.0.0-dev`) | `Major.Minor.Fix` (ej. `1.0.0`) |
+| Frontend | `maosuarez/pedido-frontend` | `Major.Minor.Fix-dev` (ej. `1.0.0-dev`) | `Major.Minor.Fix` (ej. `1.0.0`) |
 
 > Los tags se actualizan en `values-dev.yaml` y `values-prod.yaml` respectivamente.
+> Formato: `Major.Minor.Fix-dev` para desarrollo, `Major.Minor.Fix` para producción (SemVer).
 
 ---
 
