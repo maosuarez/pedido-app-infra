@@ -1,0 +1,45 @@
+{{- if .Values.ingress.enabled }}
+# Ingress: enruta el tráfico externo hacia los servicios internos del cluster.
+# El controlador ingress-nginx lee este objeto y configura nginx automáticamente.
+#
+# Rutas activas:
+#   /api/   → pedido-app-backend:8080  (API REST del backend)
+#
+# Ruta pendiente (frontend no implementado aún):
+#   /       → pedido-app-frontend:80
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ingress
+  labels:
+    app: {{ .Release.Name }}
+    component: ingress
+    environment: {{ .Values.global.environment }}
+    managed-by: helm
+  annotations:
+    # Reescribe la URL antes de enviarla al backend:
+    # /api/pedidos → /pedidos (el backend no necesita el prefijo /api)
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /api(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ .Release.Name }}-backend
+                port:
+                  number: {{ .Values.backend.service.port }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tls.secretName }}
+  {{- end }}
+{{- end }}
