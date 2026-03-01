@@ -228,8 +228,8 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 
 | # | Tarea | Responsable | Estado | Rama |
 |---|---|---|---|---|
-| 1 | Crear estructura base de carpetas | Persona A | ⬜ | `feature/pa-repo-setup` |
-| 2 | Agregar `CLAUDE.md` y `README.md` | Persona A | ⬜ | `feature/pa-repo-setup` |
+| 1 | Crear estructura base de carpetas | Persona A | ✅ | `feature/pa-helm-root` |
+| 2 | Agregar `CLAUDE.md` y `README.md` | Persona A | ✅ | `feature/pa-repo-setup` |
 | 3 | Verificar cluster con ingress-nginx y metrics-server | Persona B | ⬜ | — |
 | 4 | Instalar y configurar ArgoCD en el cluster | Persona B | ⬜ | — |
 
@@ -237,10 +237,10 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 
 | # | Tarea | Responsable | Estado | Rama |
 |---|---|---|---|---|
-| 5 | `Chart.yaml` raíz con dependencia Bitnami PostgreSQL | Persona A | ⬜ | `feature/pa-helm-root` |
-| 6 | `values.yaml` base — imagen, tag, réplicas, resources, credenciales | Persona A | ⬜ | `feature/pa-helm-root` |
-| 7 | `values-dev.yaml` — overrides de desarrollo | Persona A | ⬜ | `feature/pa-helm-root` |
-| 8 | `values-prod.yaml` — overrides de producción | Persona B | ⬜ | `feature/pb-helm-envs` |
+| 5 | `Chart.yaml` raíz con dependencia Bitnami PostgreSQL | Persona A | ✅ | `feature/pa-helm-root` |
+| 6 | `values.yaml` base — imagen, tag, réplicas, resources, credenciales | Persona A | ✅ | `feature/pa-helm-root` |
+| 7 | `values-dev.yaml` — overrides de desarrollo | Persona A | ✅ | `feature/pa-helm-root` |
+| 8 | `values-prod.yaml` — overrides de producción | Persona B | ✅ | `feature/pa-helm-root` |
 | 9 | Subchart `db/` — wrapper Bitnami + PVC | Persona A | ⬜ | `feature/pa-subchart-db` |
 | 10 | Subchart `backend/` — Deployment + Service | Persona B | ⬜ | `feature/pb-subchart-backend` |
 | 11 | Subchart `backend/` — ConfigMap + Secret | Persona B | ⬜ | `feature/pb-subchart-backend` |
@@ -286,14 +286,14 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 ## 📊 Progreso — Repo infra
 
 ```
-Setup          [░░░░░░░░░░]  0/4
-Helm Chart     [░░░░░░░░░░]  0/10
+Setup          [█████░░░░░]  2/4
+Helm Chart     [████░░░░░░]  4/10
 ArgoCD         [░░░░░░░░░░]  0/3
 Validación     [░░░░░░░░░░]  0/5
 Documentación  [░░░░░░░░░░]  0/3
 Demo           [░░░░░░░░░░]  0/2
 ──────────────────────────────
-Total          [░░░░░░░░░░]  0/27
+Total          [██░░░░░░░░]  6/27
 ```
 
 > Actualiza el estado: `⬜ → 🔄 → ✅`

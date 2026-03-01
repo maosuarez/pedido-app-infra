@@ -1,0 +1,9 @@
+apiVersion: v2
+name: db
+description: Wrapper para PostgreSQL Bitnami con PVC
+type: application
+version: 0.1.0
+dependencies:
+  - name: postgresql
+    version: ">=13.0.0"
+    repository: https://charts.bitnami.com/bitnami

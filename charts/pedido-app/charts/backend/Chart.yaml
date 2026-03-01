@@ -1,0 +1,5 @@
+apiVersion: v2
+name: backend
+description: Subchart del backend de pedido-app (skeleton — templates en siguiente iteración)
+type: application
+version: 0.1.0

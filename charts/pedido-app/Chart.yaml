@@ -1,0 +1,16 @@
+apiVersion: v2
+name: pedido-app
+description: Aplicación de gestión de pedidos — chart raíz (backend + frontend + PostgreSQL)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+dependencies:
+  - name: backend
+    version: "0.1.0"
+    repository: "file://charts/backend"
+  - name: frontend
+    version: "0.1.0"
+    repository: "file://charts/frontend"
+  - name: db
+    version: "0.1.0"
+    repository: "file://charts/db"
