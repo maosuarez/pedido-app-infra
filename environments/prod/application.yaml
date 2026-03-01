@@ -13,6 +13,7 @@ spec:
     targetRevision: main
     path: charts/pedido-app
     helm:
+      releaseName: pedido-app
       valueFiles:
         - values-prod.yaml        # Overrides del ambiente prod
 
