@@ -189,10 +189,17 @@ kubectl get ingress -n dev
 kubectl get ingress -n prod
 ```
 
+## Comando de puente port-forwarding
+```bash
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+```
+
+IP pública del Ingress (AKS): `20.185.8.196`
+
 | Entorno | Frontend | Backend API |
 |---|---|---|
-| dev | `http://<ingress-ip>/` | `http://<ingress-ip>/api/pedidos` |
-| prod | `http://<ingress-ip>/` | `http://<ingress-ip>/api/pedidos` |
+| dev | `http://20.185.8.196/` *(frontend pendiente)* | `http://20.185.8.196/api/pedidos` |
+| prod | `http://20.185.8.196/` *(frontend pendiente)* | `http://20.185.8.196/api/pedidos` |
 
 ---
 
@@ -230,8 +237,8 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 |---|---|---|---|---|
 | 1 | Crear estructura base de carpetas | Persona A | ✅ | `feature/pa-helm-root` |
 | 2 | Agregar `CLAUDE.md` y `README.md` | Persona A | ✅ | `feature/pa-repo-setup` |
-| 3 | Verificar cluster con ingress-nginx y metrics-server | Persona B | ⬜ | — |
-| 4 | Instalar y configurar ArgoCD en el cluster | Persona B | ⬜ | — |
+| 3 | Verificar cluster con ingress-nginx y metrics-server | Persona B | ✅ | — |
+| 4 | Instalar y configurar ArgoCD en el cluster | Persona B | ✅ | — |
 
 ### 📦 Helm Chart
 
@@ -241,12 +248,12 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 | 6 | `values.yaml` base — imagen, tag, réplicas, resources, credenciales | Persona A | ✅ | `feature/pa-helm-root` |
 | 7 | `values-dev.yaml` — overrides de desarrollo | Persona A | ✅ | `feature/pa-helm-root` |
 | 8 | `values-prod.yaml` — overrides de producción | Persona B | ✅ | `feature/pa-helm-root` |
-| 9 | Subchart `db/` — wrapper Bitnami + PVC | Persona A | ⬜ | `feature/pa-subchart-db` |
-| 10 | Subchart `backend/` — Deployment + Service | Persona B | ⬜ | `feature/pb-subchart-backend` |
-| 11 | Subchart `backend/` — ConfigMap + Secret | Persona B | ⬜ | `feature/pb-subchart-backend` |
-| 12 | Subchart `backend/` — HPA | Persona B | ⬜ | `feature/pb-subchart-backend` |
-| 13 | Subchart `frontend/` — Deployment + Service | Persona A | ⬜ | `feature/pa-subchart-frontend` |
-| 14 | Ingress — `/api/*` → backend, `/` → frontend | Persona A | ⬜ | `feature/pa-ingress` |
+| 9 | Subchart `db/` — wrapper Bitnami + PVC | Persona A | ✅ | `feature/pa-subchart-db` |
+| 10 | Subchart `backend/` — Deployment + Service | Persona A | ✅ | `feature/pb-subchart-backend` |
+| 11 | Subchart `backend/` — ConfigMap + Secret | Persona A | ✅ | `feature/pb-subchart-backend` |
+| 12 | Subchart `backend/` — HPA | Persona A | ✅ | `feature/pb-subchart-backend` |
+| 13 | Subchart `frontend/` — Deployment + Service | Persona B | ⬜ | `feature/pa-subchart-frontend` |
+| 14 | Ingress — `/api/*` → backend (frontend pendiente) | Persona A | ✅ | `feature/pa-ingress` |
 
 ### 🔄 ArgoCD
 
@@ -260,7 +267,7 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 
 | # | Tarea | Responsable | Estado | Rama |
 |---|---|---|---|---|
-| 18 | `helm lint` y `helm template` sin errores | Persona A | ⬜ | — |
+| 18 | `helm lint` y `helm template` sin errores | Persona A | ✅ | — |
 | 19 | Despliegue en dev: todos los pods Running | Persona B | ⬜ | — |
 | 20 | Verificar persistencia: reiniciar PostgreSQL, datos intactos | Persona B | ⬜ | — |
 | 21 | Verificar Ingress: frontend en `/`, API en `/api/` | Ambos | ⬜ | — |
@@ -286,14 +293,14 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 ## 📊 Progreso — Repo infra
 
 ```
-Setup          [█████░░░░░]  2/4
-Helm Chart     [████░░░░░░]  4/10
+Setup          [██████████]  4/4   ← ingress-nginx, metrics-server y ArgoCD instalados
+Helm Chart     [█████████░]  9/10  ← pendiente: subchart frontend (tarea 13)
 ArgoCD         [░░░░░░░░░░]  0/3
-Validación     [░░░░░░░░░░]  0/5
+Validación     [██░░░░░░░░]  1/5   ← helm lint y template sin errores
 Documentación  [░░░░░░░░░░]  0/3
 Demo           [░░░░░░░░░░]  0/2
 ──────────────────────────────
-Total          [██░░░░░░░░]  6/27
+Total          [████░░░░░░]  14/27
 ```
 
 > Actualiza el estado: `⬜ → 🔄 → ✅`
