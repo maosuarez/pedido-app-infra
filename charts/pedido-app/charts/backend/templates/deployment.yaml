@@ -45,6 +45,22 @@ spec:
                 secretKeyRef:
                   name: {{ .Release.Name }}-backend-secret
                   key: DB_PASSWORD
+          # readinessProbe: Kubernetes no envía tráfico hasta que esta probe pase.
+          # Cubre el tiempo que Spring tarda en arrancar y conectarse a PostgreSQL.
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          # livenessProbe: si falla, Kubernetes reinicia el pod.
+          # initialDelaySeconds más alto que readiness para no matar el pod mientras arranca.
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
           resources:
             requests:
               cpu: {{ .Values.resources.requests.cpu | quote }}
