@@ -1,3 +1,6 @@
 # Helm: paquetes de dependencias generados por helm dependency update
-# Ejecutar 'helm dependency update charts/pedido-app' antes de lint/install
+# Ejecutar estos comandos antes de lint/install:
+#   helm dependency update charts/pedido-app/charts/db
+#   helm dependency update charts/pedido-app
 charts/pedido-app/charts/*.tgz
+charts/pedido-app/charts/db/charts/*.tgz
