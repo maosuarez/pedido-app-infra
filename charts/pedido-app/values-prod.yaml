@@ -7,7 +7,7 @@ global:
 
 backend:
   image:
-    tag: "1.0.0"
+    tag: "dev-latest"
   replicaCount: 2
   hpa:
     minReplicas: 2
@@ -24,7 +24,7 @@ backend:
 
 frontend:
   image:
-    tag: "1.0.0"
+    tag: "dev-latest"
   replicaCount: 2
   resources:
     requests:
