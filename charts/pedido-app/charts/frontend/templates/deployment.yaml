@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-frontend
+  labels:
+    app: {{ .Release.Name }}
+    component: frontend
+    environment: {{ .Values.global.environment }}
+    managed-by: helm
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+        component: frontend
+        environment: {{ .Values.global.environment }}
+        managed-by: helm
+    spec:
+      containers:
+        - name: frontend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          # readinessProbe: verifica que nginx responda antes de enviar trafico
+          readinessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          # livenessProbe: si nginx deja de responder, Kubernetes reinicia el pod
+          livenessProbe:
+            httpGet:
+              path: /
+              port: {{ .Values.service.port }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}

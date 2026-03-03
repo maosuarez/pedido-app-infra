@@ -2,11 +2,9 @@
 # Ingress: enruta el tráfico externo hacia los servicios internos del cluster.
 # El controlador ingress-nginx lee este objeto y configura nginx automáticamente.
 #
-# Rutas activas:
-#   /api/pedidos  → pedido-app-backend:8080  (el backend ya define /api/* en sus rutas)
-#
-# Ruta pendiente (frontend no implementado aún):
-#   /             → pedido-app-frontend:80
+# Rutas:
+#   /api/*  → pedido-app-backend:8080  (Spring Boot API)
+#   /       → pedido-app-frontend:80   (React SPA via nginx)
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -26,7 +24,7 @@ spec:
     - host: {{ .Values.ingress.host }}
       http:
         paths:
-          # Sin rewrite: el backend recibe la URL tal cual (/api/pedidos llega como /api/pedidos)
+          # Backend: /api/* llega tal cual al Spring Boot
           - path: /api
             pathType: Prefix
             backend:
@@ -34,6 +32,14 @@ spec:
                 name: {{ .Release.Name }}-backend
                 port:
                   number: {{ .Values.backend.service.port }}
+          # Frontend: todo lo demas lo sirve la SPA (React + nginx)
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Release.Name }}-frontend
+                port:
+                  number: {{ .Values.frontend.service.port }}
   {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
