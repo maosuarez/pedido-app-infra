@@ -318,24 +318,9 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 |---|---|---|---|---|
 | 18 | `helm lint` y `helm template` sin errores | Persona A | ✅ | — |
 | 19 | Despliegue en dev: todos los pods Running | Persona B | ✅ | — |
-| 20 | Verificar persistencia: reiniciar PostgreSQL, datos intactos | Persona B | ⬜ | — |
-| 21 | Verificar Ingress: frontend en `/`, API en `/api/` | Ambos | ⬜ | — |
-| 22 | Verificar HPA: carga → escalado automático del backend | Ambos | ⬜ | — |
-
-### 📝 Documentación
-
-| # | Tarea | Responsable | Estado | Rama |
-|---|---|---|---|---|
-| 23 | README final con IPs e Ingress reales | Persona A | ⬜ | `feature/pa-docs` |
-| 24 | Wiki: ArgoCD setup paso a paso | Persona B | ⬜ | `feature/pb-docs` |
-| 25 | Wiki: Troubleshooting | Persona B | ⬜ | `feature/pb-docs` |
-
-### 🎤 Demo
-
-| # | Tarea | Responsable | Estado |
-|---|---|---|---|
-| 26 | Preparar cambio de tag en `values-dev.yaml` para la demo | Ambos | ⬜ |
-| 27 | Mostrar sync automático en ArgoCD UI sin comandos | Ambos | ⬜ |
+| 20 | Verificar persistencia: reiniciar PostgreSQL, datos intactos | Persona B | ✅ | — |
+| 21 | Verificar Ingress: frontend en `/`, API en `/api/` | Ambos | ✅ | — |
+| 22 | Verificar HPA: carga → escalado automático del backend | Ambos | ✅ | — |
 
 ---
 
@@ -345,11 +330,9 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 Setup          [██████████]  4/4   ← ingress-nginx, metrics-server y ArgoCD instalados
 Helm Chart     [██████████]  10/10 ← todos los subcharts completos
 ArgoCD         [██████████]  3/3   ← Applications dev y prod aplicadas, sync automático activo
-Validación     [████░░░░░░]  2/5   ← helm lint OK + dev Running + Ingress funcional
-Documentación  [░░░░░░░░░░]  0/3
-Demo           [░░░░░░░░░░]  0/2
+Validación     [██████████]  5/5   ← helm lint OK + dev Running + Ingress funcional
 ──────────────────────────────
-Total          [████████░░]  19/27
+Total          [██████████]  22/22
 ```
 
 > Actualiza el estado: `⬜ → 🔄 → ✅`
