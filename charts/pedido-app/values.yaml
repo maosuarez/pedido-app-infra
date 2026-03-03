@@ -57,7 +57,7 @@ backend:
 # ---------------------------------------------------------------------------
 frontend:
   image:
-    repository: nicoclo205/pedido-frontend
+    repository: maosuarez/pedido-frontend
     tag: "1.0.0-dev"
     pullPolicy: IfNotPresent
   replicaCount: 1
