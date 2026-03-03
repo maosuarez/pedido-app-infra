@@ -301,7 +301,7 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 | 10 | Subchart `backend/` — Deployment + Service | Persona A | ✅ | `feature/pb-subchart-backend` |
 | 11 | Subchart `backend/` — ConfigMap + Secret | Persona A | ✅ | `feature/pb-subchart-backend` |
 | 12 | Subchart `backend/` — HPA | Persona A | ✅ | `feature/pb-subchart-backend` |
-| 13 | Subchart `frontend/` — Deployment + Service | Persona B | ⬜ | `feature/pa-subchart-frontend` |
+| 13 | Subchart `frontend/` — Deployment + Service | Persona B | ✅ | `feature/pa-subchart-frontend` |
 | 14 | Ingress — `/api/*` → backend (frontend pendiente) | Persona A | ✅ | `feature/pa-ingress` |
 
 ### 🔄 ArgoCD
@@ -343,13 +343,13 @@ Leyenda: `⬜ Pendiente` · `🔄 En progreso` · `✅ Completado` · `🔴 Bloq
 
 ```
 Setup          [██████████]  4/4   ← ingress-nginx, metrics-server y ArgoCD instalados
-Helm Chart     [█████████░]  9/10  ← pendiente: subchart frontend (tarea 13)
+Helm Chart     [██████████]  10/10 ← todos los subcharts completos
 ArgoCD         [██████████]  3/3   ← Applications dev y prod aplicadas, sync automático activo
 Validación     [████░░░░░░]  2/5   ← helm lint OK + dev Running + Ingress funcional
 Documentación  [░░░░░░░░░░]  0/3
 Demo           [░░░░░░░░░░]  0/2
 ──────────────────────────────
-Total          [████████░░]  18/27
+Total          [████████░░]  19/27
 ```
 
 > Actualiza el estado: `⬜ → 🔄 → ✅`
